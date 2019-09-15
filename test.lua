@@ -1,7 +1,7 @@
-local silence, command, capture, interact, popenC, readC, readAllC, writeC, closeC
+local command, capture, interact, popenC, readC, readAllC, writeC, closeC, SILENCE
 do
   local _obj_0 = require("runkit")
-  silence, command, capture, interact, popenC, readC, readAllC, writeC, closeC = _obj_0.silence, _obj_0.command, _obj_0.capture, _obj_0.interact, _obj_0.popenC, _obj_0.readC, _obj_0.readAllC, _obj_0.writeC, _obj_0.closeC
+  command, capture, interact, popenC, readC, readAllC, writeC, closeC, SILENCE = _obj_0.command, _obj_0.capture, _obj_0.interact, _obj_0.popenC, _obj_0.readC, _obj_0.readAllC, _obj_0.writeC, _obj_0.closeC, _obj_0.SILENCE
 end
 local ct = 0
 local new
@@ -22,7 +22,7 @@ cat({
   file = "test.txt"
 }, "test.txt")
 new()
-cat = command(silence("cat"))
+cat = command("cat", SILENCE)
 cat("test.txt")
 new()
 cat = capture("cat")

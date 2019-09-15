@@ -14,23 +14,32 @@ check = (f) -> (...) ->
   f ...
 
 formCommand = (cmd, argl) ->
+  addLast = {}
   for arg in *argl
     switch type arg
-      when "string", "number", "boolean"
-        cmd ..= " #{arg}"
+      when "string", "number", "boolean" then cmd ..= " #{arg}"
       when "table"
-        cmd = format cmd, arg
+        if arg[1]
+          if arg.__last
+            table.insert addLast, arg
+          else
+            for ar in *arg do cmd ..= " #{ar}"
+        else
+          cmd = format cmd, arg
       else
-        error "runkit $ invalid type passed to the command"
+        error "runkit $ invalid type passed to command"
+  for arg in *addLast
+    cmd ..= " #{arg}"
   clear cmd
 
--- lrInstall = command "luarocks install $1 $2 $package $version"
--- lrInstall package: "rockwriter", "--keep"
-
 is_windows = "\\" == package.config\sub 1,1
---- Makes a command silent for both Unix and Windows.
--- @tparam string cmd Command to be silenced.
-silence = (cmd) -> cmd .. if is_windows then " >nul 2>nul" else " >/dev/null 2>/dev/null"
+--- Makes a command silent.
+-- @const SILENT
+SILENT = if is_windows then { ">nul 2>nul", __last: true } else { ">/dev/null 2>/dev/null", __last: true }
+
+--- Redirects `stderr` to `stdout`
+-- @const REDIRECT_STDERR
+REDIRECT_STDERR = { "2>&1", __last: true }
 
 --- Runs a simple command, without capturing output. **Curried function.*
 -- @tparam string cmd Command to be run.

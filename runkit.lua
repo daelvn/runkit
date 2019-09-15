@@ -23,30 +23,52 @@ check = function(f)
 end
 local formCommand
 formCommand = function(cmd, argl)
+  local addLast = { }
   for _index_0 = 1, #argl do
     local arg = argl[_index_0]
     local _exp_0 = type(arg)
     if "string" == _exp_0 or "number" == _exp_0 or "boolean" == _exp_0 then
       cmd = cmd .. " " .. tostring(arg)
     elseif "table" == _exp_0 then
-      cmd = format(cmd, arg)
+      if arg[1] then
+        if arg.__last then
+          table.insert(addLast, arg)
+        else
+          for _index_1 = 1, #arg do
+            local ar = arg[_index_1]
+            cmd = cmd .. " " .. tostring(ar)
+          end
+        end
+      else
+        cmd = format(cmd, arg)
+      end
     else
-      error("runkit $ invalid type passed to the command")
+      error("runkit $ invalid type passed to command")
     end
+  end
+  for _index_0 = 1, #addLast do
+    local arg = addLast[_index_0]
+    cmd = cmd .. " " .. tostring(arg)
   end
   return clear(cmd)
 end
 local is_windows = "\\" == package.config:sub(1, 1)
-local silence
-silence = function(cmd)
-  return cmd .. (function()
-    if is_windows then
-      return " >nul 2>nul"
-    else
-      return " >/dev/null 2>/dev/null"
-    end
-  end)()
+local SILENT
+if is_windows then
+  SILENT = {
+    ">nul 2>nul",
+    __last = true
+  }
+else
+  SILENT = {
+    ">/dev/null 2>/dev/null",
+    __last = true
+  }
 end
+local REDIRECT_STDERR = {
+  "2>&1",
+  __last = true
+}
 local command = check(function(cmd)
   return function(...)
     cmd = formCommand(cmd, {

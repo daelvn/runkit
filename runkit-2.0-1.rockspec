@@ -1,12 +1,12 @@
 package = "runkit"
-version = "1.0-1"
+version = "2.0-1"
 description = {
   summary = "A better version of lrunkit, for running commands in Lua easily.",
   homepage = "https://github.com/daelvn/runkit",
 }
 source = {
   url = "git://github.com/daelvn/runkit",
-  tag = "v1.0",
+  tag = "v2.0",
 }
 build = {
   type = "none",

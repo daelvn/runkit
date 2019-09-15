@@ -1,4 +1,4 @@
-import silence, command, capture, interact, popenC, readC, readAllC, writeC, closeC from require "runkit"
+import command, capture, interact, popenC, readC, readAllC, writeC, closeC, SILENCE from require "runkit"
 
 ct  = 0
 new = ->
@@ -17,7 +17,7 @@ new!
 cat file: "test.txt", "test.txt"
 
 new!
-cat = command silence "cat"
+cat = command "cat", SILENCE
 cat "test.txt"
 
 new!
